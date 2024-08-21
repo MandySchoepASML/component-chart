@@ -11,6 +11,7 @@ metadata:
   {{- end }}
   labels:
     "app.kubernetes.io/name": {{ $.Release.Name | quote }}
+    "app.kubernetes.io/instance": {{ $service.name | quote }}
     "app.kubernetes.io/managed-by": {{ $.Release.Service | quote }}
     {{- range $labelName, $labelValue := $service.labels }}
     {{ $labelName | quote }}: {{ $labelValue | quote }}
