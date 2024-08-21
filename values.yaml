@@ -13,6 +13,14 @@ service:
   ports: []
   externalIPs: []
 
+additionalServices:
+  - type: LoadBalancer
+    labels: {}
+    annotations: {}
+    ports: []
+    externalIPs: []
+
+
 labels: {}
 annotations: {}
 

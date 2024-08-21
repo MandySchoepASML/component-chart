@@ -1,67 +1,68 @@
-{{- range $portMapIndex, $portMapUnused := $.Values.service.ports }}
+{{- range $serviceIndex, $service := (concat (list $.Values.service) ($.Values.additionalServices | default dict))  }}
+{{- range $portMapIndex, $portMapUnused := $service.ports }}
 {{- if eq $portMapIndex 0 }}
 apiVersion: v1
 kind: Service
 metadata:
-  {{- if $.Values.service.name }}
-  name: {{ $.Values.service.name | quote }}
+  {{- if $service.name }}
+  name: {{ $service.name | quote }}
   {{- else }}
   name: {{ $.Release.Name | quote }}
   {{- end }}
   labels:
     "app.kubernetes.io/name": {{ $.Release.Name | quote }}
     "app.kubernetes.io/managed-by": {{ $.Release.Service | quote }}
-    {{- range $labelName, $labelValue := $.Values.service.labels }}
+    {{- range $labelName, $labelValue := $service.labels }}
     {{ $labelName | quote }}: {{ $labelValue | quote }}
     {{- end }}
   annotations:
     "helm.sh/chart": "{{ $.Chart.Name }}-{{ $.Chart.Version }}"
-    {{- range $annotationName, $annotationValue := $.Values.service.annotations }}
+    {{- range $annotationName, $annotationValue := $service.annotations }}
     {{ $annotationName | quote }}: {{ $annotationValue | quote }}
     {{- end }}
 spec:
-  {{- if $.Values.service.clusterIP }}
-  clusterIP: {{ $.Values.service.clusterIP }}
+  {{- if $service.clusterIP }}
+  clusterIP: {{ $service.clusterIP }}
   {{- end }}
   externalIPs:
-    {{- range $externalIPIndex, $externalIP := $.Values.service.externalIPs }}
+    {{- range $externalIPIndex, $externalIP := $service.externalIPs }}
     - {{ $externalIP }}
     {{- end }}
-  {{- if $.Values.service.externalName }}
-  externalName: {{ $.Values.service.externalName }}
+  {{- if $service.externalName }}
+  externalName: {{ $service.externalName }}
   {{- end }}
-  {{- if $.Values.service.externalTrafficPolicy }}
-  externalTrafficPolicy: {{ $.Values.service.externalTrafficPolicy }}
+  {{- if $service.externalTrafficPolicy }}
+  externalTrafficPolicy: {{ $service.externalTrafficPolicy }}
   {{- end }}
-  {{- if $.Values.service.healthCheckNodePort }}
-  healthCheckNodePort: {{ $.Values.service.healthCheckNodePort }}
+  {{- if $service.healthCheckNodePort }}
+  healthCheckNodePort: {{ $service.healthCheckNodePort }}
   {{- end }}
-  {{- if $.Values.service.ipFamily }}
-  ipFamily: {{ $.Values.service.ipFamily }}
+  {{- if $service.ipFamily }}
+  ipFamily: {{ $service.ipFamily }}
   {{- end }}
-  {{- if $.Values.service.loadBalancerIP }}
-  loadBalancerIP: {{ $.Values.service.loadBalancerIP }}
+  {{- if $service.loadBalancerIP }}
+  loadBalancerIP: {{ $service.loadBalancerIP }}
   {{- end }}
-  {{- if $.Values.service.loadBalancerSourceRanges }}
+  {{- if $service.loadBalancerSourceRanges }}
   loadBalancerSourceRanges:
-{{ toYaml $.Values.service.loadBalancerSourceRanges | indent 4 }}
+{{ toYaml $service.loadBalancerSourceRanges | indent 4 }}
   {{- end }}
-  {{- if $.Values.service.publishNotReadyAddresses }}
-  publishNotReadyAddresses: {{ $.Values.service.publishNotReadyAddresses }}
+  {{- if $service.publishNotReadyAddresses }}
+  publishNotReadyAddresses: {{ $service.publishNotReadyAddresses }}
   {{- end }}
-  {{- if $.Values.service.sessionAffinity }}
-  sessionAffinity: {{ $.Values.service.sessionAffinity }}
+  {{- if $service.sessionAffinity }}
+  sessionAffinity: {{ $service.sessionAffinity }}
   {{- end }}
-  {{- if $.Values.service.sessionAffinityConfig }}
+  {{- if $service.sessionAffinityConfig }}
   sessionAffinityConfig:
-{{ toYaml $.Values.service.sessionAffinityConfig | indent 4 }}
+{{ toYaml $service.sessionAffinityConfig | indent 4 }}
   {{- end }}
-  {{- if $.Values.service.topologyKeys }}
+  {{- if $service.topologyKeys }}
   topologyKeys:
-{{ toYaml $.Values.service.topologyKeys | indent 4 }}
+{{ toYaml $service.topologyKeys | indent 4 }}
   {{- end }}
   ports:
-    {{- range $portMapIndex, $portMap := $.Values.service.ports }}
+    {{- range $portMapIndex, $portMap := $service.ports }}
     {{- if $portMap.name }}
     - name: {{ $portMap.name }}
     {{- else }}
@@ -81,6 +82,7 @@ spec:
   selector:
     "app.kubernetes.io/name": "devspace-app"
     "app.kubernetes.io/component": {{ $.Release.Name | quote }}
-  type: {{ $.Values.service.type | default "ClusterIP" | quote }}
+  type: {{ $service.type | default "ClusterIP" | quote }}
+{{- end }}
 {{- end }}
 {{- end }}

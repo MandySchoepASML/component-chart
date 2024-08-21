@@ -6,7 +6,11 @@ containers:
       name: test-data
 service:
   ports:
-  - port: 80
+    - port: 80
+additionalServices:
+  - ports:
+    - port: 80
+    type: LoadBalancer
 ingress:
   tls: true
   rules:
